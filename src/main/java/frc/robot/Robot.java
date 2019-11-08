@@ -29,8 +29,7 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public VictorSPX L1, L2, R1, R2;
-  public XboxController driverController;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -40,13 +39,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    L1 = new VictorSPX(1);
-    L2 = new VictorSPX(2);
-    R1 = new VictorSPX(3);
-    R2 = new VictorSPX(4);
-    L2.follow(L1);
-    R2.follow(R1);
-    driverController = new XboxController(0);
+    drive.driveInit();
+    drive.controllerInit();
     
   }
 
@@ -82,10 +76,10 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopPeriodic() {
-    double xAxisDemand = driverController.getX(Hand.kRight);
-    double yAxisDemand = driverController.getY(Hand.kLeft);
-    R1.set(ControlMode.PercentOutput, xAxisDemand + yAxisDemand);
-    L1.set(ControlMode.PercentOutput, xAxisDemand - yAxisDemand);
+    double xAxisDemand = drive.driverController.getX(Hand.kRight);
+    double yAxisDemand = drive.driverController.getY(Hand.kLeft);
+    boolean xAxsisButton = drive.driverController.getStickButton(Hand.kRight);
+    drive.arcadeDrive(yAxisDemand, xAxisDemand, xAxsisButton);
   }
 
   /**
